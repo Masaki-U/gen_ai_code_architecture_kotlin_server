@@ -1,0 +1,83 @@
+# .github/workflows/update-directory-reusable.yml
+name: Reusable Update Directory from Template
+
+# 更新元のテンプレートリポジトリのURLを定数として定義
+# ここをあなたのテンプレートリポジトリのURLに置き換えてください
+env:
+  TEMPLATE_REPO_URL: 'Masaki-U/gen_ai_code_architecture'
+
+# このワークフローが他のワークフローから呼び出されることを定義します。
+on:
+  workflow_call:
+    inputs:
+      target_directory:
+        description: '現在のリポジトリ内で更新対象となるディレクトリのパス'
+        required: false # デフォルト値があるため必須ではありません
+        default: 'system_architecture' # ここにデフォルト値を設定
+        type: string
+      branch:
+        description: '変更をプッシュするブランチ名'
+        required: false
+        default: 'main' # デフォルトは 'main' ブランチ
+        type: string
+    secrets:
+      GH_TOKEN:
+        description: 'GitHub Personal Access Token (repoスコープが必要)'
+        required: true
+
+jobs:
+  update-target-directory:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # リポジトリへの書き込み権限を付与
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          ref: ${{ inputs.branch }} # 指定されたブランチをチェックアウト
+
+      - name: Checkout source template repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TEMPLATE_REPO_URL }} # 定数として定義したURLを使用
+          path: .template_temp # テンプレートリポジトリを一時ディレクトリにチェックアウト
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Copy and update directory
+        run: |
+          TARGET_DIR="${{ inputs.target_directory }}"
+          SOURCE_DIR="./.template_temp"
+
+          echo "Updating directory: $TARGET_DIR"
+
+          # 既存のターゲットディレクトリの内容を削除し、完全に置き換えます。
+          # !! 注意: この操作はターゲットディレクトリの内容を完全に消去します。
+          #          誤ったパスを指定しないよう、十分にご注意ください。
+          if [ -d "$TARGET_DIR" ]; then
+            echo "Removing existing directory: $TARGET_DIR"
+            rm -rf "$TARGET_DIR"
+          fi
+
+          echo "Creating directory: $TARGET_DIR"
+          mkdir -p "$TARGET_DIR"
+
+          echo "Copying contents from $SOURCE_DIR to $TARGET_DIR"
+          # テンプレートリポジトリのルートにあるすべてのファイルとディレクトリをコピー
+          cp -r "$SOURCE_DIR"/* "$TARGET_DIR"/
+          
+          echo "Cleaning up temporary source directory"
+          rm -rf "$SOURCE_DIR"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          
+          # 変更がなければコミットしない
+          git add ${{ inputs.target_directory }}
+          git diff --cached --exit-code --quiet || \
+          (git commit -m "Automated update of ${{ inputs.target_directory }} from ${{ env.TEMPLATE_REPO_URL }}" && \
+           git push origin ${{ inputs.branch }}) || \
+           echo "No changes to commit or push."

@@ -1,0 +1,25 @@
+# .github/workflows/call-update-workflow.yml
+name: Call Reusable Update Directory Workflow
+
+on:
+  # 必要に応じて、手動実行用のトリガーを追加できます
+  workflow_dispatch:
+
+  # 毎日午前2時 (JST) にこのワークフローを自動実行するスケジュールを設定します。
+  # GitHub ActionsのスケジュールはUTCで動作します。
+  # 日本時間 (JST) の午前2時は、UTCの前日の午後5時 (17:00 UTC) に相当します。
+  # schedule:
+  #   - cron: '0 17 * * *' # 毎日 UTC 17:00 (JST 翌日 02:00) に実行
+
+jobs:
+  call-update:
+    permissions:
+      contents: write # リポジトリへの書き込み権限を付与
+    # 再利用可能なワークフローのパスとブランチを指定
+    uses: Masaki-U/gen_ai_code_architecture/.github/workflows/update-directory-reusable.yml@main
+    with:
+      # target_directory はデフォルト値 (system_architecture) を使用するため、指定は任意です
+      # target_directory: 'your-custom-directory' # デフォルト値を使わない場合はここで上書きできます
+      branch: 'main' # 変更をプッシュしたいブランチ名（例: main, dev など）
+    secrets:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # リポジトリのシークレットからGH_TOKENを渡す
