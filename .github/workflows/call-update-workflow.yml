@@ -8,8 +8,8 @@ on:
   # 毎日午前2時 (JST) にこのワークフローを自動実行するスケジュールを設定します。
   # GitHub ActionsのスケジュールはUTCで動作します。
   # 日本時間 (JST) の午前2時は、UTCの前日の午後5時 (17:00 UTC) に相当します。
-  # schedule:
-  #   - cron: '0 17 * * *' # 毎日 UTC 17:00 (JST 翌日 02:00) に実行
+  schedule:
+    - cron: '0 17 * * *' # 毎日 UTC 17:00 (JST 翌日 02:00) に実行
 
 jobs:
   call-update:
