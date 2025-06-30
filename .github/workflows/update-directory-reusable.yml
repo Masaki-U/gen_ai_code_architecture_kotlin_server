@@ -4,7 +4,7 @@ name: Reusable Update Directory from Template
 # 更新元のテンプレートリポジトリのURLを定数として定義
 # ここをあなたのテンプレートリポジトリのURLに置き換えてください
 env:
-  TEMPLATE_REPO_URL: 'Masaki-U/gen_ai_code_architecture'
+  TEMPLATE_REPO_URL: 'Masaki-U/gen_ai_code_architecture_kotlin_server'
 
 # このワークフローが他のワークフローから呼び出されることを定義します。
 on:
