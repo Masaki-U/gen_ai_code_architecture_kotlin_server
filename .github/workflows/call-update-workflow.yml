@@ -12,7 +12,7 @@ on:
     - cron: '0 17 * * *' # 毎日 UTC 17:00 (JST 翌日 02:00) に実行
 
 jobs:
-  call-update:
+  call-update-kotlin:
     permissions:
       contents: write # リポジトリへの書き込み権限を付与
     # 再利用可能なワークフローのパスとブランチを指定
