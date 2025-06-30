@@ -16,7 +16,7 @@ jobs:
     permissions:
       contents: write # リポジトリへの書き込み権限を付与
     # 再利用可能なワークフローのパスとブランチを指定
-    uses: Masaki-U/gen_ai_code_architecture/.github/workflows/update-directory-reusable.yml@main
+    uses: Masaki-U/gen_ai_code_architecture_kotlin_server/.github/workflows/update-directory-reusable.yml@main
     with:
       # target_directory はデフォルト値 (system_architecture) を使用するため、指定は任意です
       # target_directory: 'your-custom-directory' # デフォルト値を使わない場合はここで上書きできます
